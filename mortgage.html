@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mortgage Affordability Calculator – Numvik</title>
+  <meta name="description" content="Free mortgage affordability calculator. Find out how much house you can afford based on your income, existing debts, and down payment." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; color: #0f172a; line-height: 1.6; }
+    nav { background: #0f172a; border-bottom: 1px solid #1e293b; }
+    .nav-inner { max-width: 1080px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .nav-logo { font-size: 1.25rem; font-weight: 700; color: #fff; text-decoration: none; }
+    .nav-logo span { color: #3b82f6; }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a { font-size: 0.8rem; color: #94a3b8; text-decoration: none; text-transform: uppercase; transition: color 0.15s; }
+    .nav-links a:hover { color: #fff; }
+    .page-header { background: #0f172a; padding: 48px 24px 56px; border-bottom: 3px solid #3b82f6; }
+    .page-header-inner { max-width: 1080px; margin: 0 auto; }
+    .ph-eyebrow { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #3b82f6; margin-bottom: 12px; }
+    .page-header h1 { font-family: Georgia, serif; font-size: 2.2rem; font-weight: 700; color: #f1f5f9; letter-spacing: -0.3px; line-height: 1.2; margin-bottom: 10px; }
+    .page-header p { font-size: 0.95rem; color: #94a3b8; max-width: 480px; }
+    .container { max-width: 1080px; margin: 0 auto; padding: 40px 24px 64px; }
+    .calc-wrap { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #e2e8f0; background: #e2e8f0; gap: 1px; }
+    @media(max-width:640px){ .calc-wrap { grid-template-columns: 1fr; } }
+    .panel { background: #fff; padding: 36px 32px; }
+    .panel-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #64748b; margin-bottom: 28px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; }
+    .field { margin-bottom: 20px; }
+    .field label { display: block; font-size: 0.78rem; font-weight: 600; color: #374151; margin-bottom: 6px; }
+    .field input { width: 100%; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 0.95rem; color: #0f172a; background: #fff; font-family: inherit; transition: border-color 0.15s; }
+    .field input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+    .pw { position: relative; }
+    .px { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none; }
+    .pw input { padding-left: 24px; }
+    .results-panel { background: #0f172a; }
+    .results-panel .panel-title { color: #475569; border-bottom-color: #1e293b; }
+    .result-hero { border-bottom: 1px solid #1e293b; padding-bottom: 24px; margin-bottom: 24px; }
+    .rh-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #475569; margin-bottom: 6px; }
+    .rh-value { font-size: 2.6rem; font-weight: 700; color: #34d399; letter-spacing: -1px; font-family: Georgia, serif; }
+    .result-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #1e293b; font-size: 0.85rem; }
+    .result-row:last-of-type { border-bottom: none; }
+    .rr-label { color: #64748b; }
+    .rr-value { font-weight: 600; color: #e2e8f0; }
+    .dti-section { margin-top: 20px; padding-top: 18px; border-top: 1px solid #1e293b; }
+    .dti-head { display: flex; justify-content: space-between; font-size: 0.72rem; color: #64748b; margin-bottom: 8px; }
+    .dti-track { height: 5px; background: #1e293b; border-radius: 3px; overflow: hidden; }
+    .dti-fill { height: 100%; border-radius: 3px; transition: width 0.3s, background 0.3s; }
+    .dti-note { font-size: 0.75rem; color: #64748b; margin-top: 8px; line-height: 1.5; }
+    .ad-slot { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 4px; padding: 18px; text-align: center; font-size: 0.72rem; color: #94a3b8; letter-spacing: 0.05em; text-transform: uppercase; margin: 32px 0; }
+    .explainer { background: #fff; border: 1px solid #e2e8f0; padding: 36px 32px; margin-top: 2px; }
+    .explainer h2 { font-family: Georgia, serif; font-size: 1.3rem; font-weight: 700; color: #0f172a; margin-bottom: 14px; }
+    .explainer p { font-size: 0.9rem; color: #374151; line-height: 1.75; margin-bottom: 12px; }
+    footer { background: #0f172a; padding: 36px 24px; border-top: 1px solid #1e293b; }
+    .footer-inner { max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+    .footer-nav { display: flex; flex-wrap: wrap; gap: 20px; }
+    .footer-nav a { font-size: 0.8rem; color: #64748b; text-decoration: none; }
+    .footer-nav a:hover { color: #94a3b8; }
+    .footer-copy { font-size: 0.75rem; color: #475569; }
+    @media(max-width:600px){ .nav-links { display: none; } .page-header h1 { font-size: 1.6rem; } .panel { padding: 24px 20px; } }
+  </style>
+</head>
+<body>
+<nav><div class="nav-inner"><a class="nav-logo" href="index.html">Num<span>vik</span></a><div class="nav-links"><a href="compound-interest.html">Compound Interest</a><a href="loan-payoff.html">Loan Payoff</a><a href="retirement.html">Retirement</a><a href="budget.html">Budget</a></div></div></nav>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="ph-eyebrow">Calculator &mdash; 04 of 05</div>
+    <h1>Mortgage Affordability</h1>
+    <p>Determine how much house you can realistically afford before you start shopping.</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="ad-slot"><!-- ADSENSE_TOP -->Advertisement</div>
+
+  <div class="calc-wrap">
+    <div class="panel">
+      <div class="panel-title">Your Financial Picture</div>
+      <div class="field"><label>Annual Gross Income</label><div class="pw"><span class="px">$</span><input type="number" id="income" value="75000" min="0" step="1000" /></div></div>
+      <div class="field"><label>Monthly Debt Payments <span style="font-weight:400;color:#94a3b8;">(car, student loans, etc.)</span></label><div class="pw"><span class="px">$</span><input type="number" id="monthlyDebt" value="300" min="0" step="50" /></div></div>
+      <div class="field"><label>Down Payment</label><div class="pw"><span class="px">$</span><input type="number" id="downPayment" value="40000" min="0" step="1000" /></div></div>
+      <div class="field"><label>Interest Rate (%)</label><input type="number" id="rate" value="6.8" min="0" max="20" step="0.1" /></div>
+      <div class="field"><label>Loan Term (years)</label><input type="number" id="term" value="30" min="5" max="30" /></div>
+    </div>
+
+    <div class="panel results-panel">
+      <div class="panel-title">What You Can Afford</div>
+      <div class="result-hero">
+        <div class="rh-label">Maximum Home Price</div>
+        <div class="rh-value" id="maxHome">$0</div>
+      </div>
+      <div class="result-row"><span class="rr-label">Max Monthly Payment</span><span class="rr-value" id="maxPayment">$0</span></div>
+      <div class="result-row"><span class="rr-label">Loan Amount</span><span class="rr-value" id="loanAmount">$0</span></div>
+      <div class="result-row"><span class="rr-label">Total Interest (30yr)</span><span class="rr-value" id="totalInterest">$0</span></div>
+      <div class="result-row"><span class="rr-label">Total Cost of Home</span><span class="rr-value" id="totalCost">$0</span></div>
+      <div class="dti-section">
+        <div class="dti-head"><span>Debt-to-Income Ratio</span><span id="dtiPct" style="color:#e2e8f0;font-weight:600;">0%</span></div>
+        <div class="dti-track"><div class="dti-fill" id="dtiBar" style="width:0%;background:#34d399;"></div></div>
+        <div class="dti-note" id="dtiNote"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ad-slot"><!-- ADSENSE_MID -->Advertisement</div>
+
+  <div class="explainer">
+    <h2>How lenders determine affordability</h2>
+    <p>Most lenders use the 28/36 rule: your monthly housing payment should not exceed 28% of your gross monthly income, and total debt payments (housing + all other debts) should not exceed 36% of gross monthly income.</p>
+    <p>This calculator uses the 28% front-end ratio to calculate the maximum monthly payment, then works backwards to the maximum home price given your down payment, interest rate, and loan term.</p>
+    <p>Keep in mind that lenders also weigh your credit score, employment history, and cash reserves. This calculator gives you a reliable estimate — a lender pre-approval will give you the exact number for your situation.</p>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-nav"><a href="index.html">Home</a><a href="compound-interest.html">Compound Interest</a><a href="loan-payoff.html">Loan Payoff</a><a href="retirement.html">Retirement</a><a href="mortgage.html">Mortgage</a><a href="budget.html">Budget</a></div>
+    <div class="footer-copy">&copy; 2026 Numvik &mdash; For informational purposes only. Not financial advice.</div>
+  </div>
+</footer>
+
+<script>
+  const fmt = n => '$' + Math.round(n).toLocaleString();
+  function calc() {
+    const annualIncome = parseFloat(document.getElementById('income').value) || 0;
+    const monthlyDebt = parseFloat(document.getElementById('monthlyDebt').value) || 0;
+    const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+    const rate = (parseFloat(document.getElementById('rate').value) || 6.8) / 100 / 12;
+    const term = (parseFloat(document.getElementById('term').value) || 30) * 12;
+    const monthlyIncome = annualIncome / 12;
+    const maxHousingPayment = monthlyIncome * 0.28;
+    const loanAmount = rate > 0 ? maxHousingPayment * (1 - Math.pow(1 + rate, -term)) / rate : maxHousingPayment * term;
+    const maxHome = loanAmount + downPayment;
+    const totalPaid = maxHousingPayment * term;
+    const totalInterest = totalPaid - loanAmount;
+    const dti = monthlyIncome > 0 ? ((maxHousingPayment + monthlyDebt) / monthlyIncome) * 100 : 0;
+    document.getElementById('maxHome').textContent = fmt(maxHome);
+    document.getElementById('maxPayment').textContent = fmt(maxHousingPayment) + '/mo';
+    document.getElementById('loanAmount').textContent = fmt(loanAmount);
+    document.getElementById('totalInterest').textContent = fmt(totalInterest);
+    document.getElementById('totalCost').textContent = fmt(totalPaid + downPayment);
+    document.getElementById('dtiPct').textContent = dti.toFixed(1) + '%';
+    const bar = document.getElementById('dtiBar');
+    bar.style.width = Math.min(dti, 100) + '%';
+    bar.style.background = dti <= 36 ? '#34d399' : dti <= 43 ? '#fbbf24' : '#f87171';
+    const note = document.getElementById('dtiNote');
+    if (dti <= 36) note.textContent = 'Excellent — well within standard lender guidelines (below 36%).';
+    else if (dti <= 43) note.textContent = 'Acceptable — some lenders will approve up to 43% DTI.';
+    else note.textContent = 'High — most lenders require a DTI below 43%.';
+  }
+  document.querySelectorAll('input').forEach(el => el.addEventListener('input', calc));
+  calc();
+</script>
+</body>
+</html>

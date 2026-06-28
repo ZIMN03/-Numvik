@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Retirement Savings Calculator – Numvik</title>
+  <meta name="description" content="Free retirement savings calculator. Find out if you're on track and exactly how much you need to save each month to retire comfortably." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; color: #0f172a; line-height: 1.6; }
+    nav { background: #0f172a; border-bottom: 1px solid #1e293b; }
+    .nav-inner { max-width: 1080px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .nav-logo { font-size: 1.25rem; font-weight: 700; color: #fff; text-decoration: none; }
+    .nav-logo span { color: #3b82f6; }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a { font-size: 0.8rem; color: #94a3b8; text-decoration: none; text-transform: uppercase; transition: color 0.15s; }
+    .nav-links a:hover { color: #fff; }
+    .page-header { background: #0f172a; padding: 48px 24px 56px; border-bottom: 3px solid #3b82f6; }
+    .page-header-inner { max-width: 1080px; margin: 0 auto; }
+    .ph-eyebrow { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #3b82f6; margin-bottom: 12px; }
+    .page-header h1 { font-family: Georgia, serif; font-size: 2.2rem; font-weight: 700; color: #f1f5f9; letter-spacing: -0.3px; line-height: 1.2; margin-bottom: 10px; }
+    .page-header p { font-size: 0.95rem; color: #94a3b8; max-width: 480px; }
+    .container { max-width: 1080px; margin: 0 auto; padding: 40px 24px 64px; }
+    .calc-wrap { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #e2e8f0; background: #e2e8f0; gap: 1px; }
+    @media(max-width:640px){ .calc-wrap { grid-template-columns: 1fr; } }
+    .panel { background: #fff; padding: 36px 32px; }
+    .panel-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #64748b; margin-bottom: 28px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; }
+    .field { margin-bottom: 20px; }
+    .field label { display: block; font-size: 0.78rem; font-weight: 600; color: #374151; margin-bottom: 6px; }
+    .field input { width: 100%; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 0.95rem; color: #0f172a; background: #fff; font-family: inherit; transition: border-color 0.15s; }
+    .field input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+    .pw { position: relative; }
+    .px { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none; }
+    .pw input { padding-left: 24px; }
+    .results-panel { background: #0f172a; }
+    .results-panel .panel-title { color: #475569; border-bottom-color: #1e293b; }
+    .status-tag { display: inline-block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 2px; margin-bottom: 16px; }
+    .tag-good { background: rgba(52,211,153,0.15); color: #34d399; }
+    .tag-warn { background: rgba(248,113,113,0.15); color: #f87171; }
+    .result-hero { border-bottom: 1px solid #1e293b; padding-bottom: 24px; margin-bottom: 24px; }
+    .rh-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #475569; margin-bottom: 6px; }
+    .rh-value { font-size: 2.6rem; font-weight: 700; letter-spacing: -1px; font-family: Georgia, serif; }
+    .result-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #1e293b; font-size: 0.85rem; }
+    .result-row:last-of-type { border-bottom: none; }
+    .rr-label { color: #64748b; }
+    .rr-value { font-weight: 600; color: #e2e8f0; }
+    .ad-slot { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 4px; padding: 18px; text-align: center; font-size: 0.72rem; color: #94a3b8; letter-spacing: 0.05em; text-transform: uppercase; margin: 32px 0; }
+    .explainer { background: #fff; border: 1px solid #e2e8f0; padding: 36px 32px; margin-top: 2px; }
+    .explainer h2 { font-family: Georgia, serif; font-size: 1.3rem; font-weight: 700; color: #0f172a; margin-bottom: 14px; }
+    .explainer p { font-size: 0.9rem; color: #374151; line-height: 1.75; margin-bottom: 12px; }
+    footer { background: #0f172a; padding: 36px 24px; border-top: 1px solid #1e293b; }
+    .footer-inner { max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+    .footer-nav { display: flex; flex-wrap: wrap; gap: 20px; }
+    .footer-nav a { font-size: 0.8rem; color: #64748b; text-decoration: none; }
+    .footer-nav a:hover { color: #94a3b8; }
+    .footer-copy { font-size: 0.75rem; color: #475569; }
+    @media(max-width:600px){ .nav-links { display: none; } .page-header h1 { font-size: 1.6rem; } .panel { padding: 24px 20px; } }
+  </style>
+</head>
+<body>
+<nav><div class="nav-inner"><a class="nav-logo" href="index.html">Num<span>vik</span></a><div class="nav-links"><a href="compound-interest.html">Compound Interest</a><a href="loan-payoff.html">Loan Payoff</a><a href="mortgage.html">Mortgage</a><a href="budget.html">Budget</a></div></div></nav>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="ph-eyebrow">Calculator &mdash; 03 of 05</div>
+    <h1>Retirement Savings</h1>
+    <p>Find out if you're on track and how much you need to save each month to retire comfortably.</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="ad-slot"><!-- ADSENSE_TOP -->Advertisement</div>
+
+  <div class="calc-wrap">
+    <div class="panel">
+      <div class="panel-title">Your Details</div>
+      <div class="field"><label>Current Age</label><input type="number" id="currentAge" value="30" min="18" max="80" /></div>
+      <div class="field"><label>Retirement Age</label><input type="number" id="retireAge" value="65" min="40" max="80" /></div>
+      <div class="field"><label>Current Savings</label><div class="pw"><span class="px">$</span><input type="number" id="currentSavings" value="15000" min="0" step="1000" /></div></div>
+      <div class="field"><label>Monthly Contribution</label><div class="pw"><span class="px">$</span><input type="number" id="monthly" value="500" min="0" step="50" /></div></div>
+      <div class="field"><label>Expected Annual Return (%)</label><input type="number" id="returnRate" value="7" min="0" max="20" step="0.5" /></div>
+      <div class="field"><label>Desired Monthly Income in Retirement</label><div class="pw"><span class="px">$</span><input type="number" id="desiredIncome" value="4000" min="0" step="100" /></div></div>
+    </div>
+
+    <div class="panel results-panel">
+      <div class="panel-title">Retirement Outlook</div>
+      <div class="result-hero">
+        <div id="statusTag" class="status-tag tag-good">On Track</div>
+        <div class="rh-label">Projected Nest Egg</div>
+        <div class="rh-value" id="nestEgg" style="color:#34d399;">$0</div>
+      </div>
+      <div class="result-row"><span class="rr-label">Years Until Retirement</span><span class="rr-value" id="yearsLeft">—</span></div>
+      <div class="result-row"><span class="rr-label">Savings Needed</span><span class="rr-value" id="savingsNeeded">$0</span></div>
+      <div class="result-row"><span class="rr-label">Monthly Income Supported</span><span class="rr-value" id="monthlyIncome">$0/mo</span></div>
+      <div class="result-row"><span class="rr-label">Suggested Monthly Savings</span><span class="rr-value" id="suggested">$0/mo</span></div>
+    </div>
+  </div>
+
+  <div class="ad-slot"><!-- ADSENSE_MID -->Advertisement</div>
+
+  <div class="explainer">
+    <h2>How much do you need to retire?</h2>
+    <p>A widely used benchmark is the 25x rule: accumulate 25 times your expected annual expenses. This is grounded in the 4% rule, which suggests a portfolio can sustain withdrawals of 4% per year indefinitely, based on historical market returns.</p>
+    <p>So if you want $4,000/month ($48,000/year) in retirement, you'd need approximately $1,200,000 saved. Social Security or other income sources can reduce this target.</p>
+    <p>Starting early is disproportionately powerful. A 25-year-old saving $300/month will frequently retire with more than a 35-year-old saving $600/month — because the extra decade of compounding makes up the difference and then some.</p>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-nav"><a href="index.html">Home</a><a href="compound-interest.html">Compound Interest</a><a href="loan-payoff.html">Loan Payoff</a><a href="retirement.html">Retirement</a><a href="mortgage.html">Mortgage</a><a href="budget.html">Budget</a></div>
+    <div class="footer-copy">&copy; 2026 Numvik &mdash; For informational purposes only. Not financial advice.</div>
+  </div>
+</footer>
+
+<script>
+  const fmt = n => '$' + Math.round(n).toLocaleString();
+  function calc() {
+    const currentAge = parseFloat(document.getElementById('currentAge').value) || 30;
+    const retireAge = parseFloat(document.getElementById('retireAge').value) || 65;
+    const currentSavings = parseFloat(document.getElementById('currentSavings').value) || 0;
+    const monthly = parseFloat(document.getElementById('monthly').value) || 0;
+    const r = (parseFloat(document.getElementById('returnRate').value) || 7) / 100;
+    const desiredMonthly = parseFloat(document.getElementById('desiredIncome').value) || 4000;
+    const years = Math.max(0, retireAge - currentAge);
+    const n = 12, rM = r / n;
+    const fvS = currentSavings * Math.pow(1 + rM, n * years);
+    const fvC = rM > 0 ? monthly * (Math.pow(1 + rM, n * years) - 1) / rM : monthly * 12 * years;
+    const nestEgg = fvS + fvC;
+    const savingsNeeded = desiredMonthly * 12 * 25;
+    const monthlyIncome = nestEgg * 0.04 / 12;
+    const gap = Math.max(0, savingsNeeded - fvS);
+    const suggestedMonthly = rM > 0 && years > 0 ? gap / ((Math.pow(1 + rM, n * years) - 1) / rM) : (years > 0 ? gap / (12 * years) : gap);
+    const onTrack = nestEgg >= savingsNeeded;
+    document.getElementById('nestEgg').textContent = fmt(nestEgg);
+    document.getElementById('nestEgg').style.color = onTrack ? '#34d399' : '#f87171';
+    document.getElementById('yearsLeft').textContent = years + ' years';
+    document.getElementById('savingsNeeded').textContent = fmt(savingsNeeded);
+    document.getElementById('monthlyIncome').textContent = fmt(monthlyIncome) + '/mo';
+    document.getElementById('suggested').textContent = onTrack ? 'On track' : fmt(suggestedMonthly) + '/mo';
+    const tag = document.getElementById('statusTag');
+    tag.textContent = onTrack ? 'On Track' : 'Increase Savings';
+    tag.className = 'status-tag ' + (onTrack ? 'tag-good' : 'tag-warn');
+  }
+  document.querySelectorAll('input').forEach(el => el.addEventListener('input', calc));
+  calc();
+</script>
+</body>
+</html>

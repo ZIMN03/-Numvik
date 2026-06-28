@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loan Payoff Calculator – Numvik</title>
+  <meta name="description" content="Free loan payoff calculator. Find out exactly when you'll be debt-free and how much total interest you'll pay on any loan or credit card." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; color: #0f172a; line-height: 1.6; }
+    nav { background: #0f172a; border-bottom: 1px solid #1e293b; }
+    .nav-inner { max-width: 1080px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .nav-logo { font-size: 1.25rem; font-weight: 700; color: #fff; text-decoration: none; }
+    .nav-logo span { color: #3b82f6; }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a { font-size: 0.8rem; color: #94a3b8; text-decoration: none; text-transform: uppercase; transition: color 0.15s; }
+    .nav-links a:hover { color: #fff; }
+    .page-header { background: #0f172a; padding: 48px 24px 56px; border-bottom: 3px solid #3b82f6; }
+    .page-header-inner { max-width: 1080px; margin: 0 auto; }
+    .ph-eyebrow { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #3b82f6; margin-bottom: 12px; }
+    .page-header h1 { font-family: Georgia, serif; font-size: 2.2rem; font-weight: 700; color: #f1f5f9; letter-spacing: -0.3px; line-height: 1.2; margin-bottom: 10px; }
+    .page-header p { font-size: 0.95rem; color: #94a3b8; max-width: 480px; }
+    .container { max-width: 1080px; margin: 0 auto; padding: 40px 24px 64px; }
+    .calc-wrap { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #e2e8f0; background: #e2e8f0; gap: 1px; }
+    @media(max-width:640px){ .calc-wrap { grid-template-columns: 1fr; } }
+    .panel { background: #fff; padding: 36px 32px; }
+    .panel-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #64748b; margin-bottom: 28px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; }
+    .field { margin-bottom: 20px; }
+    .field label { display: block; font-size: 0.78rem; font-weight: 600; color: #374151; margin-bottom: 6px; }
+    .field input { width: 100%; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 0.95rem; color: #0f172a; background: #fff; font-family: inherit; transition: border-color 0.15s; }
+    .field input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+    .pw { position: relative; }
+    .px { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 0.9rem; pointer-events: none; }
+    .pw input { padding-left: 24px; }
+    .results-panel { background: #0f172a; }
+    .results-panel .panel-title { color: #475569; border-bottom-color: #1e293b; }
+    .result-hero { border-bottom: 1px solid #1e293b; padding-bottom: 24px; margin-bottom: 24px; }
+    .rh-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #475569; margin-bottom: 6px; }
+    .rh-value { font-size: 2.6rem; font-weight: 700; color: #f87171; letter-spacing: -1px; font-family: Georgia, serif; }
+    .result-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #1e293b; font-size: 0.85rem; }
+    .result-row:last-of-type { border-bottom: none; }
+    .rr-label { color: #64748b; }
+    .rr-value { font-weight: 600; color: #e2e8f0; }
+    .tip-box { background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.2); border-radius: 4px; padding: 14px 16px; margin-top: 20px; font-size: 0.82rem; color: #94a3b8; line-height: 1.6; display: none; }
+    .tip-box strong { display: block; color: #34d399; margin-bottom: 4px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    .ad-slot { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 4px; padding: 18px; text-align: center; font-size: 0.72rem; color: #94a3b8; letter-spacing: 0.05em; text-transform: uppercase; margin: 32px 0; }
+    .explainer { background: #fff; border: 1px solid #e2e8f0; padding: 36px 32px; margin-top: 2px; }
+    .explainer h2 { font-family: Georgia, serif; font-size: 1.3rem; font-weight: 700; color: #0f172a; margin-bottom: 14px; }
+    .explainer p { font-size: 0.9rem; color: #374151; line-height: 1.75; margin-bottom: 12px; }
+    footer { background: #0f172a; padding: 36px 24px; border-top: 1px solid #1e293b; }
+    .footer-inner { max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+    .footer-nav { display: flex; flex-wrap: wrap; gap: 20px; }
+    .footer-nav a { font-size: 0.8rem; color: #64748b; text-decoration: none; }
+    .footer-nav a:hover { color: #94a3b8; }
+    .footer-copy { font-size: 0.75rem; color: #475569; }
+    @media(max-width:600px){ .nav-links { display: none; } .page-header h1 { font-size: 1.6rem; } .panel { padding: 24px 20px; } }
+  </style>
+</head>
+<body>
+<nav><div class="nav-inner"><a class="nav-logo" href="index.html">Num<span>vik</span></a><div class="nav-links"><a href="compound-interest.html">Compound Interest</a><a href="retirement.html">Retirement</a><a href="mortgage.html">Mortgage</a><a href="budget.html">Budget</a></div></div></nav>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="ph-eyebrow">Calculator &mdash; 02 of 05</div>
+    <h1>Loan Payoff</h1>
+    <p>Find out exactly when you'll be debt-free and how much interest you'll pay in total.</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="ad-slot"><!-- ADSENSE_TOP -->Advertisement</div>
+
+  <div class="calc-wrap">
+    <div class="panel">
+      <div class="panel-title">Loan Details</div>
+      <div class="field"><label>Current Balance</label><div class="pw"><span class="px">$</span><input type="number" id="balance" value="10000" min="0" step="100" /></div></div>
+      <div class="field"><label>Annual Interest Rate (%)</label><input type="number" id="rate" value="18" min="0" max="100" step="0.1" /></div>
+      <div class="field"><label>Monthly Payment</label><div class="pw"><span class="px">$</span><input type="number" id="payment" value="300" min="1" step="10" /></div></div>
+      <div class="field"><label>Extra Monthly Payment <span style="font-weight:400;color:#94a3b8;">(optional)</span></label><div class="pw"><span class="px">$</span><input type="number" id="extra" value="0" min="0" step="10" /></div></div>
+    </div>
+
+    <div class="panel results-panel">
+      <div class="panel-title">Results</div>
+      <div class="result-hero">
+        <div class="rh-label">Total Interest You'll Pay</div>
+        <div class="rh-value" id="totalInterest">$0</div>
+      </div>
+      <div class="result-row"><span class="rr-label">Payoff Time</span><span class="rr-value" id="payoffTime">—</span></div>
+      <div class="result-row"><span class="rr-label">Payoff Date</span><span class="rr-value" id="payoffDate">—</span></div>
+      <div class="result-row"><span class="rr-label">Total Amount Paid</span><span class="rr-value" id="totalPaid">$0</span></div>
+      <div class="result-row"><span class="rr-label">Original Balance</span><span class="rr-value" id="origBalance">$0</span></div>
+      <div class="tip-box" id="tipBox"><strong>Extra payment impact</strong><span id="tipText"></span></div>
+    </div>
+  </div>
+
+  <div class="ad-slot"><!-- ADSENSE_MID -->Advertisement</div>
+
+  <div class="explainer">
+    <h2>How to pay off debt faster</h2>
+    <p>Even small additional payments each month can dramatically reduce both payoff time and total interest. On a $10,000 loan at 18% APR with a $300 minimum payment, adding just $100/month saves over $1,300 in interest and removes more than a year from your payoff timeline.</p>
+    <p>Two common strategies: the avalanche method targets your highest-rate debt first, minimizing total interest paid. The snowball method targets the smallest balance first, providing faster psychological wins to maintain momentum. Both work — the best one is whichever keeps you consistent.</p>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-nav"><a href="index.html">Home</a><a href="compound-interest.html">Compound Interest</a><a href="loan-payoff.html">Loan Payoff</a><a href="retirement.html">Retirement</a><a href="mortgage.html">Mortgage</a><a href="budget.html">Budget</a></div>
+    <div class="footer-copy">&copy; 2026 Numvik &mdash; For informational purposes only. Not financial advice.</div>
+  </div>
+</footer>
+
+<script>
+  const fmt = n => '$' + Math.round(n).toLocaleString();
+  function calc() {
+    const balance = parseFloat(document.getElementById('balance').value) || 0;
+    const annualRate = parseFloat(document.getElementById('rate').value) || 0;
+    const payment = parseFloat(document.getElementById('payment').value) || 0;
+    const extra = parseFloat(document.getElementById('extra').value) || 0;
+    const monthlyRate = annualRate / 100 / 12;
+    const totalPayment = payment + extra;
+    if (balance <= 0 || totalPayment <= 0) return;
+    const minPayment = balance * monthlyRate;
+    if (totalPayment <= minPayment) {
+      document.getElementById('payoffTime').textContent = 'Never — increase payment';
+      document.getElementById('totalInterest').textContent = '—';
+      return;
+    }
+    let b = balance, months = 0, totalInterestPaid = 0;
+    while (b > 0 && months < 1200) {
+      const interest = b * monthlyRate;
+      const actualPayment = Math.min(totalPayment, b + interest); // last payment may be smaller
+      totalInterestPaid += interest;
+      b = b + interest - actualPayment;
+      months++;
+    }
+    const payoffDate = new Date();
+    payoffDate.setMonth(payoffDate.getMonth() + months);
+    const dateStr = payoffDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    const years = Math.floor(months / 12), mos = months % 12;
+    const timeStr = years > 0 ? `${years}y ${mos}m` : `${mos} months`;
+    document.getElementById('totalInterest').textContent = fmt(totalInterestPaid);
+    document.getElementById('payoffTime').textContent = timeStr;
+    document.getElementById('payoffDate').textContent = dateStr;
+    document.getElementById('totalPaid').textContent = fmt(balance + totalInterestPaid);
+    document.getElementById('origBalance').textContent = fmt(balance);
+    if (extra > 0) {
+      let b2 = balance, m2 = 0, ti2 = 0;
+      while (b2 > 0 && m2 < 1200) { const i = b2 * monthlyRate; const ap = Math.min(payment, b2 + i); ti2 += i; b2 = b2 + i - ap; m2++; }
+      const saved = ti2 - totalInterestPaid;
+      document.getElementById('tipText').textContent = `Your extra ${fmt(extra)}/mo saves ${fmt(saved)} in interest and cuts ${m2 - months} months off your payoff time.`;
+      document.getElementById('tipBox').style.display = 'block';
+    } else {
+      document.getElementById('tipBox').style.display = 'none';
+    }
+  }
+  document.querySelectorAll('input').forEach(el => el.addEventListener('input', calc));
+  calc();
+</script>
+</body>
+</html>

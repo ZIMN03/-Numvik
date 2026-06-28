@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Numvik – Free Personal Finance Calculators</title>
+  <meta name="description" content="Free personal finance calculators for compound interest, loan payoff, retirement savings, mortgage affordability, and monthly budgeting. No sign-up required." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body { font-family: 'Georgia', 'Times New Roman', serif; background: #f8fafc; color: #0f172a; line-height: 1.6; }
+
+    /* NAV */
+    nav { background: #0f172a; border-bottom: 1px solid #1e293b; }
+    .nav-inner { max-width: 1080px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .nav-logo { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 1.25rem; font-weight: 700; color: #fff; letter-spacing: -0.3px; text-decoration: none; }
+    .nav-logo span { color: #3b82f6; }
+    .nav-links { display: flex; gap: 28px; }
+    .nav-links a { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.82rem; color: #94a3b8; text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase; transition: color 0.15s; }
+    .nav-links a:hover { color: #fff; }
+
+    /* HERO */
+    .hero { background: #0f172a; padding: 72px 24px 80px; border-bottom: 1px solid #1e293b; }
+    .hero-inner { max-width: 680px; margin: 0 auto; }
+    .hero-eyebrow { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #3b82f6; margin-bottom: 20px; }
+    .hero h1 { font-size: 3rem; font-weight: 700; color: #f1f5f9; line-height: 1.15; margin-bottom: 20px; letter-spacing: -0.5px; }
+    .hero p { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 1.05rem; color: #94a3b8; max-width: 500px; line-height: 1.7; }
+
+    /* TOOLS GRID */
+    .tools-section { max-width: 1080px; margin: 0 auto; padding: 64px 24px; }
+    .tools-label { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #64748b; margin-bottom: 28px; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; }
+    .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1px; background: #e2e8f0; border: 1px solid #e2e8f0; }
+    .tool-card { background: #fff; padding: 32px 28px; text-decoration: none; color: inherit; display: block; transition: background 0.15s; position: relative; }
+    .tool-card:hover { background: #f8fafc; }
+    .tool-card:hover .tc-arrow { transform: translateX(4px); }
+    .tc-num { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.7rem; font-weight: 700; color: #3b82f6; letter-spacing: 0.08em; margin-bottom: 16px; }
+    .tc-title { font-size: 1.1rem; font-weight: 700; color: #0f172a; margin-bottom: 10px; line-height: 1.3; }
+    .tc-desc { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.85rem; color: #64748b; line-height: 1.6; margin-bottom: 20px; }
+    .tc-arrow { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.82rem; color: #3b82f6; font-weight: 600; transition: transform 0.15s; display: inline-block; }
+
+    /* AD */
+    .ad-slot { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 4px; padding: 20px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.75rem; color: #94a3b8; letter-spacing: 0.05em; text-transform: uppercase; max-width: 1080px; margin: 0 auto 48px; }
+
+    /* WHY */
+    .why { background: #fff; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; padding: 64px 24px; }
+    .why-inner { max-width: 1080px; margin: 0 auto; }
+    .why-label { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #64748b; margin-bottom: 28px; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; }
+    .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; }
+    .why-item h3 { font-size: 0.95rem; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
+    .why-item p { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.85rem; color: #64748b; line-height: 1.6; }
+
+    /* FOOTER */
+    footer { background: #0f172a; padding: 36px 24px; }
+    .footer-inner { max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+    .footer-nav { display: flex; flex-wrap: wrap; gap: 20px; }
+    .footer-nav a { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.8rem; color: #64748b; text-decoration: none; transition: color 0.15s; }
+    .footer-nav a:hover { color: #94a3b8; }
+    .footer-copy { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.75rem; color: #475569; }
+
+    @media(max-width:600px) { .hero h1 { font-size: 2rem; } .nav-links { display: none; } }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="index.html">Num<span>vik</span></a>
+    <div class="nav-links">
+      <a href="compound-interest.html">Compound Interest</a>
+      <a href="loan-payoff.html">Loan Payoff</a>
+      <a href="retirement.html">Retirement</a>
+      <a href="mortgage.html">Mortgage</a>
+      <a href="budget.html">Budget</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Personal Finance Tools</div>
+    <h1>Make better money decisions.</h1>
+    <p>Free, instant calculators for every financial question. No account, no data collected, no cost.</p>
+  </div>
+</section>
+
+<section class="tools-section">
+  <div class="tools-label">All Calculators</div>
+  <div class="tools-grid">
+    <a class="tool-card" href="compound-interest.html">
+      <div class="tc-num">01</div>
+      <div class="tc-title">Compound Interest</div>
+      <div class="tc-desc">See how your savings grow over time. Factor in regular contributions and different compounding frequencies.</div>
+      <div class="tc-arrow">Calculate &rarr;</div>
+    </a>
+    <a class="tool-card" href="loan-payoff.html">
+      <div class="tc-num">02</div>
+      <div class="tc-title">Loan Payoff</div>
+      <div class="tc-desc">Find out when you'll be debt-free and how much total interest you'll pay. See the impact of extra payments.</div>
+      <div class="tc-arrow">Calculate &rarr;</div>
+    </a>
+    <a class="tool-card" href="retirement.html">
+      <div class="tc-num">03</div>
+      <div class="tc-title">Retirement Savings</div>
+      <div class="tc-desc">Find out if you're on track for retirement and how much you need to save each month to hit your goal.</div>
+      <div class="tc-arrow">Calculate &rarr;</div>
+    </a>
+    <a class="tool-card" href="mortgage.html">
+      <div class="tc-num">04</div>
+      <div class="tc-title">Mortgage Affordability</div>
+      <div class="tc-desc">Determine how much house you can realistically afford based on income, debts, and down payment.</div>
+      <div class="tc-arrow">Calculate &rarr;</div>
+    </a>
+    <a class="tool-card" href="budget.html">
+      <div class="tc-num">05</div>
+      <div class="tc-title">Monthly Budget</div>
+      <div class="tc-desc">Break down your income and expenses to see where your money goes and how much you can save.</div>
+      <div class="tc-arrow">Calculate &rarr;</div>
+    </a>
+  </div>
+</section>
+
+<!-- AdSense — replace with your code -->
+<div class="ad-slot" style="padding:0 24px;"><div style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;padding:20px;"><!-- ADSENSE_BANNER -->Advertisement</div></div>
+
+<section class="why">
+  <div class="why-inner">
+    <div class="why-label">Why Numvik</div>
+    <div class="why-grid">
+      <div class="why-item">
+        <h3>Instant results</h3>
+        <p>Numbers update as you type. No submit button, no waiting, no page reload.</p>
+      </div>
+      <div class="why-item">
+        <h3>Completely private</h3>
+        <p>Every calculation runs in your browser. Nothing you enter is ever sent or stored.</p>
+      </div>
+      <div class="why-item">
+        <h3>No account needed</h3>
+        <p>No sign-up, no email, no subscription. Just the tool, nothing else.</p>
+      </div>
+      <div class="why-item">
+        <h3>Always free</h3>
+        <p>Every calculator on this site is free to use, with no premium tier or paywall.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-nav">
+      <a href="index.html">Home</a>
+      <a href="compound-interest.html">Compound Interest</a>
+      <a href="loan-payoff.html">Loan Payoff</a>
+      <a href="retirement.html">Retirement</a>
+      <a href="mortgage.html">Mortgage</a>
+      <a href="budget.html">Budget</a>
+    </div>
+    <div class="footer-copy">&copy; 2026 Numvik &mdash; For informational purposes only. Not financial advice.</div>
+  </div>
+</footer>
+
+</body>
+</html>

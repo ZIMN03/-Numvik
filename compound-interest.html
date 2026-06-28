@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compound Interest Calculator – Numvik</title>
+  <meta name="description" content="Free compound interest calculator. See how your savings or investments grow over time with daily, monthly, or annual compounding. No sign-up required." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; color: #0f172a; line-height: 1.6; }
+
+    nav { background: #0f172a; border-bottom: 1px solid #1e293b; }
+    .nav-inner { max-width: 1080px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .nav-logo { font-size: 1.25rem; font-weight: 700; color: #fff; letter-spacing: -0.3px; text-decoration: none; }
+    .nav-logo span { color: #3b82f6; }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a { font-size: 0.8rem; color: #94a3b8; text-decoration: none; letter-spacing: 0.02em; text-transform: uppercase; transition: color 0.15s; }
+    .nav-links a:hover { color: #fff; }
+
+    .page-header { background: #0f172a; padding: 48px 24px 56px; border-bottom: 3px solid #3b82f6; }
+    .page-header-inner { max-width: 1080px; margin: 0 auto; }
+    .ph-eyebrow { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #3b82f6; margin-bottom: 12px; }
+    .page-header h1 { font-family: Georgia, serif; font-size: 2.2rem; font-weight: 700; color: #f1f5f9; letter-spacing: -0.3px; line-height: 1.2; margin-bottom: 10px; }
+    .page-header p { font-size: 0.95rem; color: #94a3b8; max-width: 480px; }
+
+    .container { max-width: 1080px; margin: 0 auto; padding: 40px 24px 64px; }
+
+    .calc-wrap { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #e2e8f0; background: #e2e8f0; gap: 1px; }
+    @media(max-width:640px){ .calc-wrap { grid-template-columns: 1fr; } }
+
+    .panel { background: #fff; padding: 36px 32px; }
+    .panel-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #64748b; margin-bottom: 28px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; }
+
+    .field { margin-bottom: 20px; }
+    .field label { display: block; font-size: 0.78rem; font-weight: 600; color: #374151; margin-bottom: 6px; }
+    .field input, .field select { width: 100%; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 0.95rem; color: #0f172a; background: #fff; transition: border-color 0.15s; font-family: inherit; }
+    .field input:focus, .field select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+    .pw { position: relative; }
+    .px { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 0.9rem; pointer-events: none; }
+    .pw input { padding-left: 24px; }
+
+    .results-panel { background: #0f172a; }
+    .results-panel .panel-title { color: #475569; border-bottom-color: #1e293b; }
+
+    .result-hero { border-bottom: 1px solid #1e293b; padding-bottom: 24px; margin-bottom: 24px; }
+    .result-hero .rh-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #475569; margin-bottom: 6px; }
+    .result-hero .rh-value { font-size: 2.6rem; font-weight: 700; color: #f1f5f9; letter-spacing: -1px; font-family: Georgia, serif; }
+
+    .result-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #1e293b; font-size: 0.85rem; }
+    .result-row:last-of-type { border-bottom: none; }
+    .rr-label { color: #64748b; }
+    .rr-value { font-weight: 600; color: #e2e8f0; }
+    .rr-value.positive { color: #34d399; }
+
+    .bar-section { margin-top: 24px; padding-top: 20px; border-top: 1px solid #1e293b; }
+    .bar-lbl { display: flex; justify-content: space-between; font-size: 0.72rem; color: #64748b; margin-bottom: 8px; }
+    .bar-track { display: flex; height: 6px; background: #1e293b; border-radius: 3px; overflow: hidden; }
+    .bar-p { background: #3b82f6; }
+    .bar-i { background: #34d399; }
+    .bar-legend { display: flex; gap: 16px; margin-top: 10px; }
+    .bar-legend span { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; color: #64748b; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    .ad-slot { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 4px; padding: 18px; text-align: center; font-size: 0.72rem; color: #94a3b8; letter-spacing: 0.05em; text-transform: uppercase; margin: 32px 0; }
+
+    .explainer { background: #fff; border: 1px solid #e2e8f0; padding: 36px 32px; margin-top: 2px; }
+    .explainer h2 { font-family: Georgia, serif; font-size: 1.3rem; font-weight: 700; color: #0f172a; margin-bottom: 14px; }
+    .explainer p { font-size: 0.9rem; color: #374151; line-height: 1.75; margin-bottom: 12px; }
+    .explainer ul { padding-left: 18px; }
+    .explainer ul li { font-size: 0.9rem; color: #374151; line-height: 1.75; margin-bottom: 6px; }
+
+    footer { background: #0f172a; padding: 36px 24px; border-top: 1px solid #1e293b; }
+    .footer-inner { max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+    .footer-nav { display: flex; flex-wrap: wrap; gap: 20px; }
+    .footer-nav a { font-size: 0.8rem; color: #64748b; text-decoration: none; }
+    .footer-nav a:hover { color: #94a3b8; }
+    .footer-copy { font-size: 0.75rem; color: #475569; }
+
+    @media(max-width:600px){ .nav-links { display: none; } .page-header h1 { font-size: 1.6rem; } .panel { padding: 24px 20px; } }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="index.html">Num<span>vik</span></a>
+    <div class="nav-links">
+      <a href="loan-payoff.html">Loan Payoff</a>
+      <a href="retirement.html">Retirement</a>
+      <a href="mortgage.html">Mortgage</a>
+      <a href="budget.html">Budget</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="ph-eyebrow">Calculator &mdash; 01 of 05</div>
+    <h1>Compound Interest</h1>
+    <p>See how your savings grow over time with the power of compounding returns.</p>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="ad-slot"><!-- ADSENSE_TOP -->Advertisement</div>
+
+  <div class="calc-wrap">
+    <div class="panel">
+      <div class="panel-title">Your Numbers</div>
+
+      <div class="field"><label>Starting Amount</label><div class="pw"><span class="px">$</span><input type="number" id="principal" value="5000" min="0" step="100" /></div></div>
+      <div class="field"><label>Annual Interest Rate (%)</label><input type="number" id="rate" value="7" min="0" max="100" step="0.1" /></div>
+      <div class="field"><label>Time Period (years)</label><input type="number" id="years" value="20" min="1" max="50" /></div>
+      <div class="field"><label>Monthly Contribution</label><div class="pw"><span class="px">$</span><input type="number" id="monthly" value="200" min="0" step="50" /></div></div>
+      <div class="field"><label>Compounding Frequency</label>
+        <select id="freq">
+          <option value="12" selected>Monthly</option>
+          <option value="4">Quarterly</option>
+          <option value="1">Annually</option>
+          <option value="365">Daily</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="panel results-panel">
+      <div class="panel-title">Results</div>
+
+      <div class="result-hero">
+        <div class="rh-label">Future Value</div>
+        <div class="rh-value" id="futureValue">$0</div>
+      </div>
+
+      <div class="result-row"><span class="rr-label">Total Deposited</span><span class="rr-value" id="totalDeposited">$0</span></div>
+      <div class="result-row"><span class="rr-label">Interest Earned</span><span class="rr-value positive" id="totalInterest">$0</span></div>
+      <div class="result-row"><span class="rr-label">Interest as % of Total</span><span class="rr-value" id="interestPct">0%</span></div>
+
+      <div class="bar-section">
+        <div class="bar-lbl"><span>Principal</span><span>Interest</span></div>
+        <div class="bar-track">
+          <div class="bar-p" id="principalBar" style="width:50%"></div>
+          <div class="bar-i" id="interestBar" style="width:50%"></div>
+        </div>
+        <div class="bar-legend">
+          <span><span class="dot" style="background:#3b82f6;"></span>Principal</span>
+          <span><span class="dot" style="background:#34d399;"></span>Interest</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ad-slot"><!-- ADSENSE_MID -->Advertisement</div>
+
+  <div class="explainer">
+    <h2>How compound interest works</h2>
+    <p>Compound interest means you earn returns not just on your original principal, but also on the interest you've already accumulated. Over time, this creates an exponential growth curve rather than a straight line.</p>
+    <p>For example, $5,000 at 7% over 20 years:</p>
+    <ul>
+      <li>Simple interest: $5,000 + $7,000 = $12,000</li>
+      <li>Compound interest (monthly): approximately $20,193 — nearly double</li>
+    </ul>
+    <p>Adding regular monthly contributions amplifies this effect significantly. Time in the market is the single most powerful variable — starting ten years earlier will often matter more than doubling your contribution amount.</p>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-nav">
+      <a href="index.html">Home</a>
+      <a href="compound-interest.html">Compound Interest</a>
+      <a href="loan-payoff.html">Loan Payoff</a>
+      <a href="retirement.html">Retirement</a>
+      <a href="mortgage.html">Mortgage</a>
+      <a href="budget.html">Budget</a>
+    </div>
+    <div class="footer-copy">&copy; 2026 Numvik &mdash; For informational purposes only. Not financial advice.</div>
+  </div>
+</footer>
+
+<script>
+  const fmt = n => '$' + Math.round(n).toLocaleString();
+  function calc() {
+    const P = parseFloat(document.getElementById('principal').value) || 0;
+    const r = (parseFloat(document.getElementById('rate').value) || 0) / 100;
+    const t = parseFloat(document.getElementById('years').value) || 0;
+    const m = parseFloat(document.getElementById('monthly').value) || 0;
+    const n = parseFloat(document.getElementById('freq').value) || 12;
+    // Convert compounding frequency to a monthly equivalent rate so that
+    // contributions are always treated as monthly regardless of compounding period
+    const rMonthly = Math.pow(1 + r / n, n / 12) - 1;
+    const months = 12 * t;
+    const fvLump = P * Math.pow(1 + r / n, n * t);
+    const fvContrib = rMonthly === 0 ? m * months : m * (Math.pow(1 + rMonthly, months) - 1) / rMonthly;
+    const fv = fvLump + fvContrib;
+    const totalDeposited = P + m * 12 * t;
+    const totalInterest = fv - totalDeposited;
+    const pct = fv > 0 ? (totalInterest / fv * 100) : 0;
+    document.getElementById('futureValue').textContent = fmt(fv);
+    document.getElementById('totalDeposited').textContent = fmt(totalDeposited);
+    document.getElementById('totalInterest').textContent = fmt(totalInterest);
+    document.getElementById('interestPct').textContent = pct.toFixed(1) + '%';
+    const pp = fv > 0 ? (totalDeposited / fv * 100) : 50;
+    document.getElementById('principalBar').style.width = pp + '%';
+    document.getElementById('interestBar').style.width = (100 - pp) + '%';
+  }
+  document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', calc));
+  calc();
+</script>
+</body>
+</html>
